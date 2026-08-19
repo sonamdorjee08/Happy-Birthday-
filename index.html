@@ -1,0 +1,637 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Something Special For You ✨</title>
+    
+    <!-- Aesthetic Cursive & Sans Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@600;700&family=Great+Vibes&family=Nunito:wght@400;600;700;800;900&family=Sacramento&display=swap" rel="stylesheet">
+    
+    <!-- Canvas Confetti -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+
+    <style>
+        :root {
+            --primary: #ff5c8a;
+            --primary-dark: #d82b5a;
+            --primary-light: #fff0f3;
+            --secondary: #ff8e71;
+            --accent: #ffd166;
+            --bg-card: rgba(255, 255, 255, 0.95);
+            --text: #453443;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            user-select: none;
+            -webkit-user-select: none;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            font-family: 'Nunito', sans-serif;
+            background: linear-gradient(135deg, #ffeef2 0%, #ffdbe6 50%, #f7e1ff 100%);
+            color: var(--text);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow-x: hidden;
+            position: relative;
+            padding: 16px 12px;
+        }
+
+        /* Floating background items */
+        .bg-element {
+            position: fixed;
+            pointer-events: none !important;
+            z-index: 0;
+            animation: floatUp 8.5s linear infinite;
+            opacity: 0.55;
+        }
+
+        @keyframes floatUp {
+            0% { transform: translateY(105vh) scale(0.6) rotate(0deg); opacity: 0; }
+            30% { opacity: 0.7; }
+            100% { transform: translateY(-10vh) scale(1.1) rotate(360deg); opacity: 0; }
+        }
+
+        /* Main Container Card */
+        .app-container {
+            width: 100%;
+            max-width: 420px;
+            background: var(--bg-card);
+            backdrop-filter: blur(18px);
+            border-radius: 36px;
+            box-shadow: 0 20px 50px rgba(255, 92, 138, 0.22), 0 4px 15px rgba(0, 0, 0, 0.03);
+            padding: 34px 22px;
+            text-align: center;
+            position: relative;
+            z-index: 10;
+            border: 2px solid rgba(255, 255, 255, 0.95);
+        }
+
+        /* Page Display Switching */
+        .page {
+            display: none;
+        }
+
+        .page.active {
+            display: block;
+            animation: fadeIn 0.35s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(12px) scale(0.98); }
+            to { opacity: 1; transform: translateY(0) scale(1); }
+        }
+
+        /* Top Emoji Header */
+        .emoji-banner {
+            font-size: 1.55rem;
+            letter-spacing: 4px;
+            margin-bottom: 8px;
+        }
+
+        /* Cursive Title */
+        .title-cursive {
+            font-family: 'Sacramento', cursive;
+            color: #ff5c8a;
+            font-size: 3rem;
+            line-height: 1.15;
+            font-weight: 700;
+            margin-bottom: 6px;
+            text-shadow: 0 2px 8px rgba(255, 92, 138, 0.15);
+        }
+
+        .title-aesthetic {
+            font-family: 'Great Vibes', cursive;
+            color: var(--primary-dark);
+            font-size: 3.1rem;
+            line-height: 1.2;
+            margin-top: 8px;
+            margin-bottom: 8px;
+            text-shadow: 0 2px 8px rgba(216, 43, 90, 0.15);
+        }
+
+        .title-fun {
+            font-family: 'Caveat', cursive;
+            color: var(--primary-dark);
+            font-size: 2.3rem;
+            margin-bottom: 8px;
+        }
+
+        p {
+            font-size: 1.02rem;
+            line-height: 1.6;
+            color: #5d4858;
+            margin-bottom: 16px;
+        }
+
+        /* Action Buttons */
+        .btn {
+            background: linear-gradient(45deg, #ff5c8a, #ff8e71);
+            color: white;
+            border: none;
+            padding: 14px 32px;
+            font-size: 1.08rem;
+            font-weight: 800;
+            border-radius: 50px;
+            cursor: pointer;
+            box-shadow: 0 8px 22px rgba(255, 92, 138, 0.35);
+            transition: all 0.15s ease;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            margin-top: 10px;
+            touch-action: manipulation;
+            position: relative;
+            z-index: 20;
+        }
+
+        .btn:active {
+            transform: scale(0.96);
+        }
+
+        .btn-outline {
+            background: #fff;
+            color: var(--primary);
+            border: 2px solid var(--primary);
+            box-shadow: none;
+        }
+
+        .nav-btn-group {
+            display: flex;
+            justify-content: center;
+            gap: 12px;
+            margin-top: 16px;
+            flex-wrap: wrap;
+        }
+
+        .btn-back {
+            background: #f3e5ec;
+            color: #6a4f61;
+            padding: 10px 20px;
+            font-size: 0.95rem;
+            font-weight: 700;
+            border-radius: 30px;
+            box-shadow: none;
+        }
+
+        /* Gift Box Icon Container */
+        .gift-wrapper {
+            margin: 20px auto 14px;
+            display: inline-block;
+            cursor: pointer;
+            animation: bounceSoft 2s ease-in-out infinite;
+        }
+
+        @keyframes bounceSoft {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
+        /* Mini Game */
+        .game-canvas-container {
+            width: 100%;
+            height: 220px;
+            background: #fff5f8;
+            border-radius: 22px;
+            border: 2px dashed #ffb3c6;
+            position: relative;
+            overflow: hidden;
+            margin: 15px 0;
+        }
+
+        .floating-target {
+            position: absolute;
+            font-size: 2.4rem;
+            cursor: pointer;
+            transition: transform 0.1s;
+        }
+
+        /* Smart Runaway Question */
+        .playful-button-stack {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 14px;
+            margin-top: 15px;
+            min-height: 130px;
+            position: relative;
+        }
+
+        #runawayBtn {
+            transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+            position: relative;
+            z-index: 5;
+        }
+
+        .playful-hint {
+            font-size: 0.92rem;
+            color: var(--primary);
+            font-weight: 700;
+            min-height: 22px;
+        }
+
+        /* Polaroid Gallery */
+        .polaroid-gallery {
+            display: flex;
+            gap: 16px;
+            overflow-x: auto;
+            padding: 10px 6px 20px;
+            scroll-snap-type: x mandatory;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        .polaroid-gallery::-webkit-scrollbar {
+            height: 6px;
+        }
+        .polaroid-gallery::-webkit-scrollbar-thumb {
+            background: #ffb3c6;
+            border-radius: 10px;
+        }
+
+        .polaroid-card {
+            flex: 0 0 225px;
+            background: #fff;
+            padding: 12px 12px 16px;
+            border-radius: 16px;
+            box-shadow: 0 10px 24px rgba(0,0,0,0.08);
+            transform: rotate(-2deg);
+            scroll-snap-align: center;
+            transition: transform 0.3s;
+        }
+
+        .polaroid-card:nth-child(even) {
+            transform: rotate(2deg);
+        }
+
+        .polaroid-card img {
+            width: 100%;
+            height: 215px;
+            object-fit: cover;
+            border-radius: 12px;
+        }
+
+        .polaroid-caption {
+            font-family: 'Caveat', cursive;
+            font-size: 1.4rem;
+            margin-top: 10px;
+            color: var(--primary-dark);
+            font-weight: 700;
+        }
+
+        /* Final Wish Page */
+        .hero-photo-frame {
+            width: 100%;
+            height: 240px;
+            border-radius: 22px;
+            overflow: hidden;
+            box-shadow: 0 12px 28px rgba(255, 92, 138, 0.25);
+            border: 4px solid #fff;
+            margin-bottom: 10px;
+        }
+
+        .hero-photo-frame img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .wish-message {
+            background: #fff7f9;
+            border-left: 4px solid var(--primary);
+            padding: 18px 20px;
+            border-radius: 16px;
+            font-size: 1.02rem;
+            line-height: 1.65;
+            margin: 16px 0;
+            color: #453443;
+            text-align: left;
+            box-shadow: inset 0 2px 6px rgba(255, 92, 138, 0.05);
+            font-weight: 600;
+        }
+
+        .cake-container {
+            font-size: 3.4rem;
+            cursor: pointer;
+            margin: 8px 0 4px;
+            display: inline-block;
+            transition: transform 0.2s;
+        }
+
+        .cake-container:hover {
+            transform: scale(1.15);
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Floating Background Particles -->
+    <div id="bgParticles"></div>
+
+    <main class="app-container">
+
+        <!-- ================= STAGE 1: FRONT INTRO PAGE ================= -->
+        <section id="page1" class="page active">
+            <div class="emoji-banner">✨ 🎀 🌸 🎀 ✨</div>
+            
+            <h1 class="title-cursive">Something Special<br>For You ❤️</h1>
+            
+            <!-- 3D Gift Box SVG Icon -->
+            <div class="gift-wrapper" onclick="goToPage(2)">
+                <svg width="125" height="125" viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <filter id="shadow" x="10" y="70" width="100" height="40">
+                        <ellipse cx="60" cy="90" rx="38" ry="12" fill="#FFAEC9" opacity="0.4"/>
+                    </filter>
+                    <ellipse cx="60" cy="90" rx="38" ry="12" fill="#FFAEC9" opacity="0.4"/>
+                    <!-- Box Body -->
+                    <rect x="28" y="48" width="64" height="44" rx="10" fill="#FFAE42"/>
+                    <path d="M28 54 H92 V84 C92 88.4 88.4 92 84 92 H36 C31.6 92 28 88.4 28 84 V54 Z" fill="#F4900C"/>
+                    <!-- Vertical Ribbon on Body -->
+                    <rect x="52" y="48" width="16" height="44" fill="#E52B50"/>
+                    <!-- Box Lid -->
+                    <rect x="22" y="38" width="76" height="15" rx="5" fill="#FFC04D"/>
+                    <rect x="52" y="38" width="16" height="15" fill="#FF3B65"/>
+                    <!-- Bow Ribbons -->
+                    <path d="M40 38 C28 22 45 16 54 36 Z" fill="#FF3B65"/>
+                    <path d="M80 38 C92 22 75 16 66 36 Z" fill="#FF3B65"/>
+                    <circle cx="60" cy="37" r="7" fill="#E52B50"/>
+                </svg>
+            </div>
+
+            <p style="color: #8e7a89; font-size: 0.95rem; margin-top: 4px;">(Tap below to unwrap your message!)</p>
+            
+            <div>
+                <button type="button" class="btn" onclick="goToPage(2)">Click Here To Open 🎁</button>
+            </div>
+        </section>
+
+        <!-- ================= STAGE 2: MINI GAME ================= -->
+        <section id="page2" class="page">
+            <h2 class="title-fun">Pop the Sweet Hearts! 🎈</h2>
+            <p>Catch <b>5 floating hearts</b> to unlock the surprise!</p>
+            
+            <div style="font-size: 1.15rem; font-weight: 800; color: var(--primary); margin-bottom: 6px;">
+                Score: <span id="gameScore">0</span> / 5
+            </div>
+            
+            <div class="game-canvas-container" id="gameArea"></div>
+
+            <div id="gameNav" class="nav-btn-group">
+                <button type="button" class="btn btn-back" onclick="goToPage(1)">⬅️ Back</button>
+                <button type="button" id="gameNextBtn" class="btn" style="display: none;" onclick="goToPage(3)">Continue ➔</button>
+            </div>
+        </section>
+
+        <!-- ================= STAGE 3: PLAYFUL QUESTION ================= -->
+        <section id="page3" class="page">
+            <h2 class="title-fun">Quick Question! 🧐</h2>
+            <p>Are you the prettiest, sweetest, and most wonderful person today?</p>
+            
+            <div class="playful-button-stack">
+                <button type="button" class="btn" id="yesBtn" onclick="celebrateAndNext(4)" style="width: 220px;">YES, 100%! 🥰</button>
+                <button type="button" class="btn btn-outline" id="runawayBtn" onclick="dodgeNoButton()" onmouseover="dodgeNoButton()" style="width: 180px;">No 😜</button>
+                <div class="playful-hint" id="playfulMsg"></div>
+            </div>
+
+            <div class="nav-btn-group">
+                <button type="button" class="btn btn-back" onclick="goToPage(2)">⬅️ Back</button>
+            </div>
+        </section>
+
+        <!-- ================= STAGE 4: POLAROID MEMORIES ================= -->
+        <section id="page4" class="page">
+            <h2 class="title-fun">Gallery of Moments 📸</h2>
+            <p>Swipe horizontally to see these cute memories!</p>
+            
+            <div class="polaroid-gallery">
+                <!-- Cute Selfie With Glasses -->
+                <div class="polaroid-card">
+                    <img src="100162.jpg" alt="Pema Photo 1">
+                    <div class="polaroid-caption">Classic Pema Vibes! 🌸</div>
+                </div>
+
+                <!-- Green Mirror Selfie -->
+                <div class="polaroid-card">
+                    <img src="100163.jpg" alt="Pema Photo 2">
+                    <div class="polaroid-caption">Cutest Mirror Selfie 📸</div>
+                </div>
+
+                <!-- Elegant White Dress -->
+                <div class="polaroid-card">
+                    <img src="100149.jpg" alt="Pema Photo 3">
+                    <div class="polaroid-caption">Elegance & Style ✨👗</div>
+                </div>
+            </div>
+
+            <div class="nav-btn-group">
+                <button type="button" class="btn btn-back" onclick="goToPage(3)">⬅️ Back</button>
+                <button type="button" class="btn" onclick="goToPage(5)">Open Birthday Wish 🎂</button>
+            </div>
+        </section>
+
+        <!-- ================= STAGE 5: FINAL BIRTHDAY WISH ================= -->
+        <section id="page5" class="page">
+            <!-- Hero Photo -->
+            <div class="hero-photo-frame">
+                <img src="100161.jpg" alt="Pema Main Photo">
+            </div>
+
+            <h1 class="title-aesthetic">Happy Birthday, Pema! ✨</h1>
+            
+            <div class="wish-message">
+                Happy Birthday, Pema! 🎂✨ I hope you’re doing well. I hope life gives you plenty of reasons to smile and that this year brings you all the happiness you deserve. Wishing you lots of happiness and a beautiful year ahead. Take care. ❤️
+            </div>
+
+            <div class="cake-container" id="cake" onclick="blowCandles()">
+                🎂
+            </div>
+            <p id="cakeNote" style="font-size: 0.9rem; color: #8a7384;">(Tap the cake to blow out candles & make a wish!)</p>
+
+            <button type="button" class="btn" onclick="fireBigConfetti()">Send More Love & Confetti! 🎉</button>
+
+            <!-- Navigation Buttons to Go Back / Restart -->
+            <div class="nav-btn-group" style="margin-top: 20px;">
+                <button type="button" class="btn btn-back" onclick="goToPage(4)">⬅️ View Gallery</button>
+                <button type="button" class="btn btn-back" onclick="goToPage(1)">🔄 Start Over</button>
+            </div>
+        </section>
+
+    </main>
+
+    <script>
+        // Page Navigation
+        window.goToPage = function(pageNumber) {
+            const pages = document.querySelectorAll('.page');
+            pages.forEach(p => {
+                p.classList.remove('active');
+            });
+            
+            const target = document.getElementById('page' + pageNumber);
+            if (target) {
+                target.classList.add('active');
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            }
+
+            if (pageNumber === 2) {
+                startGame();
+            }
+            if (pageNumber === 5) {
+                fireBigConfetti();
+            }
+        };
+
+        window.celebrateAndNext = function(pageNumber) {
+            confetti({
+                particleCount: 90,
+                spread: 70,
+                origin: { y: 0.6 }
+            });
+            setTimeout(() => goToPage(pageNumber), 350);
+        };
+
+        // Floating Background Elements
+        function createBackgroundParticles() {
+            const container = document.getElementById('bgParticles');
+            const items = ['💖', '🌸', '✨', '🎈', '🍰', '⭐', '🎀'];
+            for (let i = 0; i < 14; i++) {
+                const el = document.createElement('div');
+                el.className = 'bg-element';
+                el.innerText = items[Math.floor(Math.random() * items.length)];
+                el.style.left = Math.random() * 100 + 'vw';
+                el.style.animationDelay = (Math.random() * 6) + 's';
+                el.style.fontSize = (Math.random() * 1.3 + 1) + 'rem';
+                container.appendChild(el);
+            }
+        }
+        createBackgroundParticles();
+
+        // Mini-Game Logic
+        let score = 0;
+        let gameInterval = null;
+
+        function startGame() {
+            score = 0;
+            document.getElementById('gameScore').innerText = score;
+            const gameArea = document.getElementById('gameArea');
+            gameArea.innerHTML = '';
+            document.getElementById('gameNextBtn').style.display = 'none';
+
+            if (gameInterval) clearInterval(gameInterval);
+            
+            gameInterval = setInterval(() => {
+                if (score >= 5) {
+                    clearInterval(gameInterval);
+                    return;
+                }
+                spawnTarget();
+            }, 750);
+        }
+
+        function spawnTarget() {
+            const gameArea = document.getElementById('gameArea');
+            if (!gameArea) return;
+
+            const target = document.createElement('div');
+            target.className = 'floating-target';
+            target.innerText = ['💖', '🎈', '🎀', '✨'][Math.floor(Math.random() * 4)];
+            
+            const maxX = gameArea.clientWidth - 50;
+            const maxY = gameArea.clientHeight - 50;
+            
+            target.style.left = Math.max(10, Math.random() * maxX) + 'px';
+            target.style.top = Math.max(10, Math.random() * maxY) + 'px';
+
+            function onHit(e) {
+                e.stopPropagation();
+                score++;
+                document.getElementById('gameScore').innerText = score;
+                target.remove();
+                
+                if (score >= 5) {
+                    clearInterval(gameInterval);
+                    document.getElementById('gameNextBtn').style.display = 'inline-flex';
+                    confetti({ particleCount: 60, spread: 60 });
+                }
+            }
+
+            target.onclick = onHit;
+            gameArea.appendChild(target);
+
+            setTimeout(() => {
+                if (target.parentElement) target.remove();
+            }, 1700);
+        }
+
+        // Smart Dodging Button Logic
+        let dodgeCount = 0;
+        const funnyMessages = [
+            "Hey, you can't say no! 😜",
+            "Nice try, button ran away! 🌸",
+            "You know the real answer is YES! 💕",
+            "Okay, fine! You have to agree now! 🥰"
+        ];
+
+        window.dodgeNoButton = function() {
+            const runawayBtn = document.getElementById('runawayBtn');
+            const playfulMsg = document.getElementById('playfulMsg');
+            
+            dodgeCount++;
+            
+            if (dodgeCount <= 3) {
+                const randomX = (Math.random() - 0.5) * 140;
+                const randomY = (Math.random() - 0.5) * 50;
+                runawayBtn.style.transform = `translate(${randomX}px, ${randomY}px)`;
+                playfulMsg.innerText = funnyMessages[dodgeCount - 1];
+            } else {
+                runawayBtn.style.transform = "translate(0px, 0px)";
+                runawayBtn.innerText = "Okay, YES! 🥰";
+                runawayBtn.className = "btn";
+                runawayBtn.onclick = function() { celebrateAndNext(4); };
+                runawayBtn.onmouseover = null;
+                playfulMsg.innerText = funnyMessages[3];
+            }
+        };
+
+        // Blow Candle & Confetti
+        window.blowCandles = function() {
+            const cake = document.getElementById('cake');
+            cake.innerHTML = '🍰✨';
+            document.getElementById('cakeNote').innerText = 'Candles blown! May all your wishes come true! 🌟';
+            fireBigConfetti();
+        };
+
+        window.fireBigConfetti = function() {
+            const duration = 2.5 * 1000;
+            const animationEnd = Date.now() + duration;
+
+            (function frame() {
+                confetti({
+                    particleCount: 4,
+                    angle: 60,
+                    spread: 55,
+                    origin: { x: 0 }
+                });
+                confetti({
+                    particleCount: 4,
+                    angle: 120,
+                    spread: 55,
+                    origin: { x: 1 }
+                });
+
+                if (Date.now() < animationEnd) {
+                    requestAnimationFrame(frame);
+                }
+            }());
+        };
+    </script>
+</body>
+</html>
